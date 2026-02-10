@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CircularProgress, Grid, Box } from "@mui/material";
+import { CircularProgress, Grid, Box, Container, Typography } from "@mui/material";
 import PeliculaCard from "../components/PeliculaCard";
 import { fetchPeliculas, deletePelicula } from "../services/peliculasService";
 
@@ -27,19 +27,44 @@ export default function PeliculaList() {
 
   if (loading) {
     return (
-      <Box display="flex" justifyContent="center" alignItems="center" minHeight="80vh">
+      <Box
+        sx={{
+          minHeight: "80vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(180deg, #eef2ff, #e0e7ff)",
+        }}
+      >
         <CircularProgress size={60} />
       </Box>
     );
   }
 
   return (
-    <Grid container spacing={2} sx={{ mt: 2 }}>
-      {(Array.isArray(peliculas) ? peliculas : []).map((pelicula) => (
-        <Grid item key={pelicula.id} xs={12} sm={6} md={4}>
-          <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(180deg, #eef2ff, #e0e7ff)",
+        py: 6,
+      }}
+    >
+      <Container maxWidth="md">
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 800, color: "#0f172a", mb: 4, textAlign: "center" }}
+        >
+          Películas
+        </Typography>
+
+        <Grid container spacing={3}>
+          {peliculas.map((pelicula) => (
+            <Grid item key={pelicula.id} xs={12} sm={6} md={4} lg={4} xl={4}>
+              <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
+            </Grid>
+          ))}
         </Grid>
-      ))}
-    </Grid>
+      </Container>
+    </Box>
   );
 }
