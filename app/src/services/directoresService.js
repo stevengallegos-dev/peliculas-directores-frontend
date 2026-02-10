@@ -1,17 +1,9 @@
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
+import api from "./api";
 
 /* Obtener directores */
 export async function fetchDirectores() {
-  const response = await axios.get(`${API_BASE_URL}/directores/`);
-  return response.data;
+  const res = await api.get("/api/directores/");
+  return res.data;
 }
 
 /* Convertir archivo a Base64 */
@@ -32,31 +24,31 @@ export async function addDirector(directorData) {
     payload.foto = await fileToBase64(directorData.foto);
   }
 
-  const response = await axios.post(`${API_BASE_URL}/directores/`, payload);
-  return response.data;
+  const res = await api.post("/api/directores/", payload);
+  return res.data;
 }
 
-/* Obtener director por ID */
+/* Obtener por ID */
 export async function fetchDirectorById(id) {
-  const response = await axios.get(`${API_BASE_URL}/directores/${id}/`);
-  return response.data;
+  const res = await api.get(`/api/directores/${id}/`);
+  return res.data;
 }
 
-/* Actualizar director */
+/* Actualizar */
 export async function updateDirector(id, directorData) {
   const payload = { ...directorData };
 
   if (directorData.foto instanceof File) {
     payload.foto = await fileToBase64(directorData.foto);
   } else {
-    delete payload.foto; // no cambiar foto
+    delete payload.foto;
   }
 
-  const response = await axios.patch(`${API_BASE_URL}/directores/${id}/`, payload);
-  return response.data;
+  const res = await api.patch(`/api/directores/${id}/`, payload);
+  return res.data;
 }
 
-/* Eliminar director */
+/* Eliminar */
 export async function deleteDirector(id) {
-  await axios.delete(`${API_BASE_URL}/directores/${id}/`);
+  await api.delete(`/api/directores/${id}/`);
 }

@@ -1,87 +1,80 @@
-import axios from "axios";
+import api from "./api";
 
-// ✅ usa tu variable real del .env (CRUD)
-const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-axios.interceptors.request.use((config) => {
-  const token = localStorage.getItem("access_token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-/**
- * Obtener la lista de películas
- */
+/* Obtener películas */
 export async function fetchPeliculas() {
-  const response = await axios.get(`${API_BASE_URL}/peliculas/`);
-  return response.data;
+  const res = await api.get("/api/peliculas/");
+  return res.data;
 }
 
-/**
- * Convertir un archivo a Base64
- */
+/* Base64 */
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result); // incluye encabezado data:image
+    reader.onload = () => resolve(reader.result); // data:image/...;base64,...
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
 }
 
-/**
- * Crear una nueva película
- */
+/* Crear */
 export async function addPelicula(peliculaData) {
-  let posterBase64 = "";
-  if (peliculaData.poster) {
-    posterBase64 = await fileToBase64(peliculaData.poster);
-  }
+  let posterValue = "";
 
-  const directorId = Array.isArray(peliculaData.director)
-    ? peliculaData.director[0]
-    : peliculaData.director;
+  // ✅ soporta File o string Base64
+  if (peliculaData.poster instanceof File) {
+    posterValue = await fileToBase64(peliculaData.poster);
+  } else if (typeof peliculaData.poster === "string") {
+    posterValue = peliculaData.poster;
+  }
 
   const payload = {
-    ...peliculaData,
-    director: directorId ? Number(directorId) : null,
-    poster: posterBase64,
+    director: peliculaData.director ? Number(peliculaData.director) : null,
+    titulo: peliculaData.titulo,
+    genero: peliculaData.genero,
+    fecha_estreno: peliculaData.fecha_estreno || null,
+    duracion_min:
+      peliculaData.duracion_min === "" || peliculaData.duracion_min === null || peliculaData.duracion_min === undefined
+        ? null
+        : Number(peliculaData.duracion_min),
+    poster: posterValue || "",
   };
 
-  const response = await axios.post(`${API_BASE_URL}/peliculas/`, payload);
-  return response.data;
+  const res = await api.post("/api/peliculas/", payload);
+  return res.data;
 }
 
-
-/**
- * Obtener película por ID (detalle / editar)
- */
+/* Obtener por ID */
 export async function fetchPeliculaById(id) {
-  const response = await axios.get(`${API_BASE_URL}/peliculas/${id}/`);
-  return response.data;
+  const res = await api.get(`/api/peliculas/${id}/`);
+  return res.data;
 }
 
-/**
- * Actualizar película
- */
+/* Actualizar */
 export async function updatePelicula(id, peliculaData) {
-  const payload = { ...peliculaData };
+  const payload = {
+    director: peliculaData.director ? Number(peliculaData.director) : undefined,
+    titulo: peliculaData.titulo,
+    genero: peliculaData.genero,
+    fecha_estreno: peliculaData.fecha_estreno || null,
+    duracion_min:
+      peliculaData.duracion_min === "" || peliculaData.duracion_min === null || peliculaData.duracion_min === undefined
+        ? null
+        : Number(peliculaData.duracion_min),
+  };
 
+  // ✅ si mandas poster, lo actualiza (File o Base64 string)
   if (peliculaData.poster instanceof File) {
     payload.poster = await fileToBase64(peliculaData.poster);
-  } else {
-    delete payload.poster;
+  } else if (typeof peliculaData.poster === "string" && peliculaData.poster !== "") {
+    payload.poster = peliculaData.poster;
   }
+  // Si no mandas poster, no lo toca (se queda como está en backend)
 
-  const response = await axios.patch(`${API_BASE_URL}/peliculas/${id}/`, payload);
-  return response.data;
+  const res = await api.patch(`/api/peliculas/${id}/`, payload);
+  return res.data;
 }
 
-/**
- * Eliminar película
- */
+/* Eliminar */
 export async function deletePelicula(id) {
-  await axios.delete(`${API_BASE_URL}/peliculas/${id}/`);
+  await api.delete(`/api/peliculas/${id}/`);
 }

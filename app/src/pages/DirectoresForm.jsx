@@ -11,10 +11,9 @@ export default function DirectoresForm() {
 
   const [directorData, setDirectorData] = useState({
     nombre: "",
-    apellido: "",
-    nivel: "",
-    fecha_nacimiento: "",
-    foto: null,
+    nacionalidad: "",
+    descripcion: "",
+    foto: null, // File
   });
 
   const [loading, setLoading] = useState(false);
@@ -27,24 +26,24 @@ export default function DirectoresForm() {
       .then((data) => {
         setDirectorData({
           nombre: data.nombre || "",
-          apellido: data.apellido || "",
-          nivel: data.nivel || "",
-          fecha_nacimiento: data.fecha_nacimiento || "",
-          foto: null,
+          nacionalidad: data.nacionalidad || "",
+          descripcion: data.descripcion || "",
+          foto: null, // no cargamos foto existente (solo si el usuario selecciona nueva)
         });
       })
       .catch(() => alert("Error cargando el director"))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, isEdit]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
     if (name === "foto") {
-      setDirectorData({ ...directorData, foto: files[0] });
-    } else {
-      setDirectorData({ ...directorData, [name]: value });
+      setDirectorData((prev) => ({ ...prev, foto: files?.[0] || null }));
+      return;
     }
+
+    setDirectorData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -61,7 +60,8 @@ export default function DirectoresForm() {
       }
 
       navigate("/directores");
-    } catch {
+    } catch (err) {
+      console.error(err);
       alert("Error al guardar el director");
     } finally {
       setLoading(false);
@@ -73,46 +73,42 @@ export default function DirectoresForm() {
   return (
     <>
       <Typography variant="h4" gutterBottom>
-        {isEdit ? "Editar Director." : "Formulario de Director."}
+        {isEdit ? "Editar Director" : "Crear Director"}
       </Typography>
 
       <Box
         component="form"
         onSubmit={handleSubmit}
-        sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+        sx={{ display: "flex", flexDirection: "column", gap: 2, maxWidth: 520 }}
       >
         <TextField
           label="Nombre"
           name="nombre"
           onChange={handleChange}
           value={directorData.nombre}
+          required
+          fullWidth
         />
 
         <TextField
-          label="Apellido"
-          name="apellido"
+          label="Nacionalidad"
+          name="nacionalidad"
           onChange={handleChange}
-          value={directorData.apellido}
+          value={directorData.nacionalidad}
+          fullWidth
         />
 
         <TextField
-          label="Nivel"
-          name="nivel"
-          type="number"
+          label="Descripción"
+          name="descripcion"
           onChange={handleChange}
-          value={directorData.nivel}
+          value={directorData.descripcion}
+          multiline
+          rows={4}
+          fullWidth
         />
 
-        <TextField
-          label="Fecha de nacimiento"
-          name="fecha_nacimiento"
-          type="date"
-          InputLabelProps={{ shrink: true }}
-          onChange={handleChange}
-          value={directorData.fecha_nacimiento}
-        />
-
-        <input type="file" name="foto" onChange={handleChange} />
+        <input type="file" name="foto" accept="image/*" onChange={handleChange} />
 
         <Button variant="contained" type="submit">
           Guardar

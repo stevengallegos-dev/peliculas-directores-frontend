@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
+import { Card, CardActions, CardContent, CardMedia, Typography, Box } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -8,16 +8,9 @@ import { useNavigate } from "react-router-dom";
 export default function DirectorCard({ director, onDelete }) {
   const navigate = useNavigate();
   const isLoggedIn = localStorage.getItem("access_token") !== null;
-  const mediaUrl = import.meta.env.VITE_MEDIA_URL;
 
-  let image = "https://via.placeholder.com/300";
-  if (director.foto) {
-    image = director.foto.startsWith("data:image")
-      ? director.foto
-      : `${mediaUrl}/${director.foto
-          .replace(/^\/+/, "")
-          .replace(/^media\/?/, "")}`;
-  }
+  // Como tu foto es Base64 (TextField), basta con usarla directo.
+  const image = director?.foto ? director.foto : "https://via.placeholder.com/300";
 
   return (
     <Card>
@@ -25,13 +18,23 @@ export default function DirectorCard({ director, onDelete }) {
         component="img"
         sx={{ height: 200, objectFit: "contain" }}
         image={image}
-        alt={director.nombre}
+        alt={director?.nombre || "Director"}
       />
 
       <CardContent>
         <Typography variant="h5">
-          {director.nombre} {director.apellido}
+          {director?.nombre || "Sin nombre"}
         </Typography>
+
+        <Typography variant="body2" color="text.secondary">
+          {director?.nacionalidad || "Nacionalidad no registrada"}
+        </Typography>
+
+        <Box sx={{ mt: 1 }}>
+          <Typography variant="body2">
+            {director?.descripcion || "Sin descripción"}
+          </Typography>
+        </Box>
       </CardContent>
 
       <CardActions sx={{ display: "flex", gap: 1 }}>
@@ -51,10 +54,7 @@ export default function DirectorCard({ director, onDelete }) {
               <EditIcon />
             </IconButton>
 
-            <IconButton
-              color="error"
-              onClick={() => onDelete(director.id)}
-            >
+            <IconButton color="error" onClick={() => onDelete(director.id)}>
               <DeleteIcon />
             </IconButton>
           </>

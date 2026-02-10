@@ -16,7 +16,7 @@ export default function PeliculaList() {
   };
 
   useEffect(() => {
-    loadPeliculas();
+    loadPeliculas(); // ✅ público, sin login
   }, []);
 
   const handleDelete = async (id) => {
@@ -34,9 +34,9 @@ export default function PeliculaList() {
   }
 
   return (
-    <Grid container spacing={2} marginTop={2}>
+    <Grid container spacing={2} sx={{ mt: 2 }}>
       {(Array.isArray(peliculas) ? peliculas : []).map((pelicula) => (
-        <Grid key={pelicula.id} xs={12} sm={6} md={4}>
+        <Grid item key={pelicula.id} xs={12} sm={6} md={4}>
           <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
         </Grid>
       ))}
