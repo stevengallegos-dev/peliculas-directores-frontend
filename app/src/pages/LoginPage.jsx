@@ -26,7 +26,7 @@ export default function LoginPage() {
       const responseData = await login(loginData.username, loginData.password);
       localStorage.setItem("access_token", responseData.access_token);
       alert("Inicio de sesión exitoso");
-      // 👉 Redirigir a la vista principal de DIRECTORES
+     
       navigate("/directores");
     } catch (error) {
       console.error("Error during login:", error);

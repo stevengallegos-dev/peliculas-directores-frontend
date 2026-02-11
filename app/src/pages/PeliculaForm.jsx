@@ -9,7 +9,7 @@ import Spinner from "../components/Spinner";
 const fileToBase64 = (file) =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onload = () => resolve(reader.result); // data:image/...;base64,...
+    reader.onload = () => resolve(reader.result); 
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
@@ -22,7 +22,7 @@ export default function PeliculaForm() {
   const [directores, setDirectores] = useState([]);
 
   const [peliculaData, setPeliculaData] = useState({
-    director_id: "", // ✅ CAMBIO
+    director_id: "", 
     titulo: "",
     genero: "",
     duracion_min: "",
@@ -39,7 +39,7 @@ export default function PeliculaForm() {
       .catch(() => alert("Error cargando directores"));
   }, []);
 
-  // Si es edición, cargar película
+ 
   useEffect(() => {
     if (!isEdit) return;
 
@@ -47,7 +47,7 @@ export default function PeliculaForm() {
     fetchPeliculaById(id)
       .then((data) => {
         setPeliculaData({
-          // ✅ CAMBIO: soporta si el backend devuelve director_id o director
+         
           director_id: data.director_id ?? data.director ?? "",
           titulo: data.titulo || "",
           genero: data.genero || "",
@@ -79,7 +79,7 @@ export default function PeliculaForm() {
       setLoading(true);
 
       const payload = {
-        // ✅ CAMBIO: el backend pide director_id
+      
         director_id: Number(peliculaData.director_id),
         titulo: peliculaData.titulo,
         genero: peliculaData.genero,
@@ -96,7 +96,7 @@ export default function PeliculaForm() {
         alert("Película agregada exitosamente");
       }
 
-      navigate("/"); // ✅ vuelve a PeliculaList (o tu home)
+      navigate("/"); 
     } catch (error) {
       console.log("STATUS:", error?.response?.status);
       console.log("DATA:", error?.response?.data);
@@ -119,7 +119,7 @@ export default function PeliculaForm() {
         onSubmit={handleSubmit}
         sx={{ display: "flex", flexDirection: "column", gap: 2 }}
       >
-        {/* ✅ CAMBIO: name y value ahora son director_id */}
+    
         <TextField
           select
           label="Director"

@@ -20,7 +20,7 @@ export default function PeliculaDetalle() {
         const data = await fetchPeliculaById(id);
         if (isMounted) setPelicula(data);
       } catch {
-        // OJO: si quieres, en vez de alert, podemos mostrar el mensaje bonito también
+       
         alert("Error cargando la película");
       } finally {
         if (isMounted) setLoading(false);

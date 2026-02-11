@@ -20,7 +20,7 @@ function fileToBase64(file) {
 export async function addPelicula(peliculaData) {
   let posterValue = "";
 
-  // ✅ soporta File o string Base64
+  // soporta File o string Base64
   if (peliculaData.poster instanceof File) {
     posterValue = await fileToBase64(peliculaData.poster);
   } else if (typeof peliculaData.poster === "string") {
@@ -28,7 +28,7 @@ export async function addPelicula(peliculaData) {
   }
 
   const payload = {
-    // ✅ CAMBIO CLAVE: director_id (NO director)
+  
     director_id: peliculaData.director_id ? Number(peliculaData.director_id) : null,
 
     titulo: peliculaData.titulo,
@@ -56,7 +56,7 @@ export async function fetchPeliculaById(id) {
 /* Actualizar */
 export async function updatePelicula(id, peliculaData) {
   const payload = {
-    // ✅ CAMBIO CLAVE: director_id (NO director)
+  
     director_id: peliculaData.director_id ? Number(peliculaData.director_id) : undefined,
 
     titulo: peliculaData.titulo,
@@ -70,7 +70,7 @@ export async function updatePelicula(id, peliculaData) {
         : Number(peliculaData.duracion_min),
   };
 
-  // ✅ si mandas poster, lo actualiza (File o Base64 string)
+ 
   if (peliculaData.poster instanceof File) {
     payload.poster = await fileToBase64(peliculaData.poster);
   } else if (typeof peliculaData.poster === "string" && peliculaData.poster !== "") {
