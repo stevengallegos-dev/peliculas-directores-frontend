@@ -134,7 +134,7 @@ El frontend se encuentra completamente funcional, con CRUD implementado para amb
 ### Autor
 
 -Steven Gallegos
--Ingeniería de Software – UISEK
+-Ingeniería de Software UISEK
 
 ### Nota Final
 
