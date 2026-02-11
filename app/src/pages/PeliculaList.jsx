@@ -57,10 +57,14 @@ export default function PeliculaList() {
           Películas
         </Typography>
 
-        <Grid container spacing={3}>
+        {/* 👇 CLAVE: centrar el contenedor */}
+        <Grid container spacing={3} justifyContent="center">
           {peliculas.map((pelicula) => (
-            <Grid item key={pelicula.id} xs={12} sm={6} md={4} lg={4} xl={4}>
-              <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
+            <Grid item key={pelicula.id} xs={12} sm={6} md={4}>
+              {/* 👇 CLAVE: centrar cada card */}
+              <Box display="flex" justifyContent="center">
+                <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
+              </Box>
             </Grid>
           ))}
         </Grid>

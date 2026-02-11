@@ -9,43 +9,69 @@ export default function PeliculaCard({ pelicula, onDelete }) {
   const navigate = useNavigate();
   const isLoggedIn = localStorage.getItem("access_token") !== null;
 
-  // poster es Base64 en TextField
   const image = pelicula?.poster
-    ? (pelicula.poster.startsWith("data:image")
-        ? pelicula.poster
-        : `data:image/jpeg;base64,${pelicula.poster}`)
+    ? pelicula.poster.startsWith("data:image")
+      ? pelicula.poster
+      : `data:image/jpeg;base64,${pelicula.poster}`
     : "https://via.placeholder.com/300";
 
   return (
-    <Card>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 3,
+        boxShadow: 4, // 👈 igual que Directores
+      }}
+    >
       <CardMedia
         component="img"
-        sx={{ height: 150, objectFit: "contain" }}
+        height="250" // 👈 igual que Directores
         image={image}
         alt={pelicula?.titulo || "Película"}
+        sx={{
+          objectFit: "contain", // 👈 igual que Directores (no recorta)
+          backgroundColor: "#f8fafc", // 👈 igual que Directores
+        }}
       />
 
-      <CardContent>
-        <Typography variant="h5">{pelicula?.titulo || "Sin título"}</Typography>
-        <Typography variant="body2" color="text.secondary">
-          {pelicula?.genero || "Género no registrado"}
+      <CardContent sx={{ pb: 0 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            fontWeight: 600,
+            textAlign: "center",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {(pelicula?.titulo || "Sin título") + " — " + (pelicula?.genero || "Género")}
         </Typography>
       </CardContent>
 
-      <CardActions sx={{ display: "flex", gap: 1 }}>
-        {/* 👇 CAMBIO AQUÍ */}
-        <IconButton color="primary" onClick={() => navigate(`/peliculas/${pelicula.id}`)}>
-          <VisibilityIcon />
+      <CardActions
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 1,
+          flexWrap: "nowrap",
+          pb: 1,
+        }}
+      >
+        <IconButton size="small" color="primary" onClick={() => navigate(`/peliculas/${pelicula.id}`)}>
+          <VisibilityIcon fontSize="small" />
         </IconButton>
 
         {isLoggedIn && (
           <>
-            <IconButton color="primary" onClick={() => navigate(`/edit-pelicula/${pelicula.id}`)}>
-              <EditIcon />
+            <IconButton size="small" color="primary" onClick={() => navigate(`/edit-pelicula/${pelicula.id}`)}>
+              <EditIcon fontSize="small" />
             </IconButton>
 
-            <IconButton color="error" onClick={() => onDelete(pelicula.id)}>
-              <DeleteIcon />
+            <IconButton size="small" color="error" onClick={() => onDelete(pelicula.id)}>
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </>
         )}

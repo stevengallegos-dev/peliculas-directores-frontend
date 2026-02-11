@@ -22,7 +22,7 @@ export default function PeliculaForm() {
   const [directores, setDirectores] = useState([]);
 
   const [peliculaData, setPeliculaData] = useState({
-    director: "",
+    director_id: "", // ✅ CAMBIO
     titulo: "",
     genero: "",
     duracion_min: "",
@@ -32,12 +32,14 @@ export default function PeliculaForm() {
 
   const [loading, setLoading] = useState(false);
 
+  // Cargar directores
   useEffect(() => {
     fetchDirectores()
       .then((data) => setDirectores(data?.results ?? data ?? []))
       .catch(() => alert("Error cargando directores"));
   }, []);
 
+  // Si es edición, cargar película
   useEffect(() => {
     if (!isEdit) return;
 
@@ -45,7 +47,8 @@ export default function PeliculaForm() {
     fetchPeliculaById(id)
       .then((data) => {
         setPeliculaData({
-          director: data.director ?? "",
+          // ✅ CAMBIO: soporta si el backend devuelve director_id o director
+          director_id: data.director_id ?? data.director ?? "",
           titulo: data.titulo || "",
           genero: data.genero || "",
           duracion_min: data.duracion_min ?? "",
@@ -76,7 +79,8 @@ export default function PeliculaForm() {
       setLoading(true);
 
       const payload = {
-        director: Number(peliculaData.director),
+        // ✅ CAMBIO: el backend pide director_id
+        director_id: Number(peliculaData.director_id),
         titulo: peliculaData.titulo,
         genero: peliculaData.genero,
         fecha_estreno: peliculaData.fecha_estreno || null,
@@ -92,7 +96,7 @@ export default function PeliculaForm() {
         alert("Película agregada exitosamente");
       }
 
-      navigate("/"); // ✅ vuelve al menú/lista (PeliculaList)
+      navigate("/"); // ✅ vuelve a PeliculaList (o tu home)
     } catch (error) {
       console.log("STATUS:", error?.response?.status);
       console.log("DATA:", error?.response?.data);
@@ -115,11 +119,12 @@ export default function PeliculaForm() {
         onSubmit={handleSubmit}
         sx={{ display: "flex", flexDirection: "column", gap: 2 }}
       >
+        {/* ✅ CAMBIO: name y value ahora son director_id */}
         <TextField
           select
           label="Director"
-          name="director"
-          value={peliculaData.director}
+          name="director_id"
+          value={peliculaData.director_id}
           onChange={handleChange}
           required
         >

@@ -28,12 +28,16 @@ export async function addPelicula(peliculaData) {
   }
 
   const payload = {
-    director: peliculaData.director ? Number(peliculaData.director) : null,
+    // ✅ CAMBIO CLAVE: director_id (NO director)
+    director_id: peliculaData.director_id ? Number(peliculaData.director_id) : null,
+
     titulo: peliculaData.titulo,
     genero: peliculaData.genero,
     fecha_estreno: peliculaData.fecha_estreno || null,
     duracion_min:
-      peliculaData.duracion_min === "" || peliculaData.duracion_min === null || peliculaData.duracion_min === undefined
+      peliculaData.duracion_min === "" ||
+      peliculaData.duracion_min === null ||
+      peliculaData.duracion_min === undefined
         ? null
         : Number(peliculaData.duracion_min),
     poster: posterValue || "",
@@ -52,12 +56,16 @@ export async function fetchPeliculaById(id) {
 /* Actualizar */
 export async function updatePelicula(id, peliculaData) {
   const payload = {
-    director: peliculaData.director ? Number(peliculaData.director) : undefined,
+    // ✅ CAMBIO CLAVE: director_id (NO director)
+    director_id: peliculaData.director_id ? Number(peliculaData.director_id) : undefined,
+
     titulo: peliculaData.titulo,
     genero: peliculaData.genero,
     fecha_estreno: peliculaData.fecha_estreno || null,
     duracion_min:
-      peliculaData.duracion_min === "" || peliculaData.duracion_min === null || peliculaData.duracion_min === undefined
+      peliculaData.duracion_min === "" ||
+      peliculaData.duracion_min === null ||
+      peliculaData.duracion_min === undefined
         ? null
         : Number(peliculaData.duracion_min),
   };
@@ -68,7 +76,6 @@ export async function updatePelicula(id, peliculaData) {
   } else if (typeof peliculaData.poster === "string" && peliculaData.poster !== "") {
     payload.poster = peliculaData.poster;
   }
-  // Si no mandas poster, no lo toca (se queda como está en backend)
 
   const res = await api.patch(`/api/peliculas/${id}/`, payload);
   return res.data;

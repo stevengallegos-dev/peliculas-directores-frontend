@@ -1,4 +1,4 @@
-import { Card, CardActions, CardContent, CardMedia, Typography, Box } from "@mui/material";
+import { Card, CardActions, CardContent, CardMedia, Typography } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -9,53 +9,67 @@ export default function DirectorCard({ director, onDelete }) {
   const navigate = useNavigate();
   const isLoggedIn = localStorage.getItem("access_token") !== null;
 
-  // Como tu foto es Base64 (TextField), basta con usarla directo.
   const image = director?.foto ? director.foto : "https://via.placeholder.com/300";
 
   return (
-    <Card>
+    <Card
+      sx={{
+        height: "100%",
+        display: "flex",
+        flexDirection: "column",
+        borderRadius: 3,
+        boxShadow: 4,
+      }}
+    >
       <CardMedia
         component="img"
-        sx={{ height: 200, objectFit: "contain" }}
+        height="250"
         image={image}
         alt={director?.nombre || "Director"}
+        sx={{
+          objectFit: "contain",
+          backgroundColor: "#f8fafc",
+        }}
       />
 
-      <CardContent>
-        <Typography variant="h5">
-          {director?.nombre || "Sin nombre"}
+      <CardContent sx={{ pb: 0 }}>
+        <Typography
+          variant="subtitle2"
+          sx={{
+            fontWeight: 600,
+            textAlign: "center",
+            whiteSpace: "nowrap",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+          }}
+        >
+          {(director?.nombre || "Sin nombre") +
+            " — " +
+            (director?.nacionalidad || "Nacionalidad")}
         </Typography>
-
-        <Typography variant="body2" color="text.secondary">
-          {director?.nacionalidad || "Nacionalidad no registrada"}
-        </Typography>
-
-        <Box sx={{ mt: 1 }}>
-          <Typography variant="body2">
-            {director?.descripcion || "Sin descripción"}
-          </Typography>
-        </Box>
       </CardContent>
 
-      <CardActions sx={{ display: "flex", gap: 1 }}>
-        <IconButton
-          color="primary"
-          onClick={() => navigate(`/director/${director.id}`)}
-        >
-          <VisibilityIcon />
+      <CardActions
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 1,
+          flexWrap: "nowrap",
+          pb: 1,
+        }}
+      >
+        <IconButton size="small" color="primary" onClick={() => navigate(`/director/${director.id}`)}>
+          <VisibilityIcon fontSize="small" />
         </IconButton>
 
         {isLoggedIn && (
           <>
-            <IconButton
-              color="primary"
-              onClick={() => navigate(`/edit-director/${director.id}`)}
-            >
-              <EditIcon />
+            <IconButton size="small" color="primary" onClick={() => navigate(`/edit-director/${director.id}`)}>
+              <EditIcon fontSize="small" />
             </IconButton>
 
-            <IconButton color="error" onClick={() => onDelete(director.id)}>
-              <DeleteIcon />
+            <IconButton size="small" color="error" onClick={() => onDelete(director.id)}>
+              <DeleteIcon fontSize="small" />
             </IconButton>
           </>
         )}

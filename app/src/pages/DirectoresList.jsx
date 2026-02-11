@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Grid, Box, CircularProgress } from "@mui/material";
+import { Grid, Box, CircularProgress, Container, Typography } from "@mui/material";
 import DirectorCard from "../components/DirectorCard";
 import { fetchDirectores, deleteDirector } from "../services/directoresService";
 
@@ -11,7 +11,7 @@ export default function DirectoresList() {
     setLoading(true);
     fetchDirectores()
       .then((data) => {
-        const lista = Array.isArray(data) ? data : (data?.results || []);
+        const lista = Array.isArray(data) ? data : data?.results || [];
         setDirectores(lista);
       })
       .catch(() => alert("Error obteniendo los directores"))
@@ -31,10 +31,13 @@ export default function DirectoresList() {
   if (loading) {
     return (
       <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="80vh"
+        sx={{
+          minHeight: "80vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(180deg, #eef2ff, #e0e7ff)",
+        }}
       >
         <CircularProgress size={60} />
       </Box>
@@ -42,13 +45,29 @@ export default function DirectoresList() {
   }
 
   return (
-    <Grid container spacing={2} marginTop={2}>
-      {Array.isArray(directores) &&
-        directores.map((director) => (
-          <Grid key={director.id} size={{ xs: 12, sm: 6, md: 4 }}>
-            <DirectorCard director={director} onDelete={handleDelete} />
-          </Grid>
-        ))}
-    </Grid>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        background: "linear-gradient(180deg, #eef2ff, #e0e7ff)",
+        py: 6,
+      }}
+    >
+      <Container maxWidth="md">
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: 800, color: "#0f172a", mb: 4, textAlign: "center" }}
+        >
+          Directores
+        </Typography>
+
+        <Grid container spacing={3} justifyContent="center">
+          {directores.map((director) => (
+            <Grid item key={director.id} xs={12} sm={6} md={4} lg={4} xl={4}>
+              <DirectorCard director={director} onDelete={handleDelete} />
+            </Grid>
+          ))}
+        </Grid>
+      </Container>
+    </Box>
   );
 }
