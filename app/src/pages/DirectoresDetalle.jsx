@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchDirectorById } from "../services/directoresService";
-import { Box, Button, Card, CardContent, Typography } from "@mui/material";
+import { Card, CardContent, Typography, Box, Button, Divider } from "@mui/material";
 import Spinner from "../components/Spinner";
 
 export default function DirectoresDetalle() {
@@ -46,15 +46,23 @@ export default function DirectoresDetalle() {
           alignItems: "center",
           gap: 2,
           textAlign: "center",
+          px: 2,
         }}
       >
         <Typography variant="h5">😕 No se encontró el director</Typography>
+
+        <Typography color="text.secondary">
+          Puede que el director no exista, haya sido eliminado o no tengas acceso.
+        </Typography>
+
         <Button variant="contained" onClick={() => navigate(-1)}>
           Volver
         </Button>
       </Box>
     );
   }
+
+  const peliculas = Array.isArray(director.peliculas) ? director.peliculas : [];
 
   return (
     <Card sx={{ maxWidth: 700, mx: "auto", mt: 3 }}>
@@ -67,7 +75,7 @@ export default function DirectoresDetalle() {
           {director.nombre ?? "Sin nombre"}
         </Typography>
 
-        <Box component="ul" sx={{ m: 0, pl: 2 }}>
+        <Box component="ul" sx={{ m: 0, pl: 2, mb: 2 }}>
           <li>
             <Typography>
               <b>Nacionalidad:</b> {director.nacionalidad || "—"}
@@ -80,16 +88,21 @@ export default function DirectoresDetalle() {
           </li>
         </Box>
 
-        {Array.isArray(director.peliculas) && director.peliculas.length > 0 && (
-          <Box sx={{ mt: 3 }}>
-            <Typography variant="h6">Películas</Typography>
-            <Box component="ul" sx={{ m: 0, pl: 2 }}>
-              {director.peliculas.map((p) => (
-                <li key={p.id}>
-                  <Typography>{p.titulo}</Typography>
-                </li>
-              ))}
-            </Box>
+        <Divider sx={{ my: 2 }} />
+
+        <Typography variant="h6" sx={{ mb: 1 }}>
+          Películas
+        </Typography>
+
+        {peliculas.length === 0 ? (
+          <Typography color="text.secondary">Este director no tiene películas registradas.</Typography>
+        ) : (
+          <Box component="ul" sx={{ m: 0, pl: 2 }}>
+            {peliculas.map((p) => (
+              <li key={p.id ?? p.titulo}>
+                <Typography>{p.titulo ?? "Sin título"}</Typography>
+              </li>
+            ))}
           </Box>
         )}
       </CardContent>
