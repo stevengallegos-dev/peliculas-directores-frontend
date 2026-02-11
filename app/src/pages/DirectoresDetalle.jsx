@@ -1,68 +1,33 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { fetchDirectorById } from "../services/directoresService";
-import { Card, CardContent, Typography, Box, Button, Divider } from "@mui/material";
+import { Card, CardContent, CardMedia, Typography, Box, Button } from "@mui/material";
 import Spinner from "../components/Spinner";
 
-export default function DirectoresDetalle() {
+export default function DirectorDetalle() {
   const { id } = useParams();
   const navigate = useNavigate();
 
   const [director, setDirector] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-
-    const cargarDirector = async () => {
-      setLoading(true);
-      try {
-        const data = await fetchDirectorById(id);
-        if (isMounted) setDirector(data);
-      } catch {
-        alert("Error cargando el director");
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    if (id) cargarDirector();
-
-    return () => {
-      isMounted = false;
-    };
+    setLoading(true);
+    fetchDirectorById(id)
+      .then(setDirector)
+      .catch(() => alert("Error cargando el director"))
+      .finally(() => setLoading(false));
   }, [id]);
 
   if (loading) return <Spinner />;
+  if (!director) return null;
 
-  if (!director) {
-    return (
-      <Box
-        sx={{
-          minHeight: "60vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-          gap: 2,
-          textAlign: "center",
-          px: 2,
-        }}
-      >
-        <Typography variant="h5">😕 No se encontró el director</Typography>
-
-        <Typography color="text.secondary">
-          Puede que el director no exista, haya sido eliminado o no tengas acceso.
-        </Typography>
-
-        <Button variant="contained" onClick={() => navigate(-1)}>
-          Volver
-        </Button>
-      </Box>
-    );
-  }
-
-  const peliculas = Array.isArray(director.peliculas) ? director.peliculas : [];
+  // foto es Base64 en TextField
+  const image = director.foto
+    ? (director.foto.startsWith("data:image")
+        ? director.foto
+        : `data:image/jpeg;base64,${director.foto}`)
+    : "https://via.placeholder.com/300";
 
   return (
     <Card sx={{ maxWidth: 700, mx: "auto", mt: 3 }}>
@@ -70,40 +35,39 @@ export default function DirectoresDetalle() {
         Volver
       </Button>
 
+      <CardMedia
+        component="img"
+        image={image}
+        sx={{ height: 260, objectFit: "contain" }}
+        alt={director.nombre}
+      />
+
       <CardContent>
         <Typography variant="h4" sx={{ mb: 1 }}>
-          {director.nombre ?? "Sin nombre"}
+          {director.nombre}
         </Typography>
 
-        <Box component="ul" sx={{ m: 0, pl: 2, mb: 2 }}>
-          <li>
-            <Typography>
-              <b>Nacionalidad:</b> {director.nacionalidad || "—"}
-            </Typography>
-          </li>
-          <li>
-            <Typography>
-              <b>Fecha de nacimiento:</b> {director.fecha_nacimiento || "—"}
-            </Typography>
-          </li>
+        <Box component="ul" sx={{ m: 0, pl: 2 }}>
+          <li><Typography><b>Nacionalidad:</b> {director.nacionalidad || "—"}</Typography></li>
+          <li><Typography><b>Descripción:</b> {director.descripcion || "—"}</Typography></li>
         </Box>
 
-        <Divider sx={{ my: 2 }} />
-
-        <Typography variant="h6" sx={{ mb: 1 }}>
+        <Typography variant="h6" sx={{ mt: 3 }}>
           Películas
         </Typography>
 
-        {peliculas.length === 0 ? (
-          <Typography color="text.secondary">Este director no tiene películas registradas.</Typography>
-        ) : (
+        {director.peliculas?.length ? (
           <Box component="ul" sx={{ m: 0, pl: 2 }}>
-            {peliculas.map((p) => (
-              <li key={p.id ?? p.titulo}>
-                <Typography>{p.titulo ?? "Sin título"}</Typography>
+            {director.peliculas.map((p) => (
+              <li key={p.id}>
+                <Typography>
+                  {p.titulo} {p.genero ? `(${p.genero})` : ""}
+                </Typography>
               </li>
             ))}
           </Box>
+        ) : (
+          <Typography sx={{ mt: 1 }}>Este director no tiene películas registradas.</Typography>
         )}
       </CardContent>
     </Card>
