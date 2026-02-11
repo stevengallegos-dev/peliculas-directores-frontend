@@ -16,7 +16,7 @@ export default function PeliculaList() {
   };
 
   useEffect(() => {
-    loadPeliculas(); // ✅ público, sin login
+    loadPeliculas(); 
   }, []);
 
   const handleDelete = async (id) => {
@@ -50,18 +50,10 @@ export default function PeliculaList() {
       }}
     >
       <Container maxWidth="md">
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 800, color: "#0f172a", mb: 4, textAlign: "center" }}
-        >
-          Películas
-        </Typography>
-
-        {/* 👇 CLAVE: centrar el contenedor */}
         <Grid container spacing={3} justifyContent="center">
           {peliculas.map((pelicula) => (
             <Grid item key={pelicula.id} xs={12} sm={6} md={4}>
-              {/* 👇 CLAVE: centrar cada card */}
+           
               <Box display="flex" justifyContent="center">
                 <PeliculaCard pelicula={pelicula} onDelete={handleDelete} />
               </Box>

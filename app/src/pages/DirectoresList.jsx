@@ -53,13 +53,6 @@ export default function DirectoresList() {
       }}
     >
       <Container maxWidth="md">
-        <Typography
-          variant="h4"
-          sx={{ fontWeight: 800, color: "#0f172a", mb: 4, textAlign: "center" }}
-        >
-          Directores
-        </Typography>
-
         <Grid container spacing={3} justifyContent="center">
           {directores.map((director) => (
             <Grid item key={director.id} xs={12} sm={6} md={4} lg={4} xl={4}>

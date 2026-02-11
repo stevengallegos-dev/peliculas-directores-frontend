@@ -9,24 +9,65 @@ export default function PeliculaDetalle() {
   const navigate = useNavigate();
 
   const [pelicula, setPelicula] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
-    fetchPeliculaById(id)
-      .then(setPelicula)
-      .catch(() => alert("Error cargando la película"))
-      .finally(() => setLoading(false));
+    let isMounted = true;
+
+    const cargarPelicula = async () => {
+      setLoading(true);
+      try {
+        const data = await fetchPeliculaById(id);
+        if (isMounted) setPelicula(data);
+      } catch {
+        // OJO: si quieres, en vez de alert, podemos mostrar el mensaje bonito también
+        alert("Error cargando la película");
+      } finally {
+        if (isMounted) setLoading(false);
+      }
+    };
+
+    if (id) cargarPelicula();
+
+    return () => {
+      isMounted = false;
+    };
   }, [id]);
 
   if (loading) return <Spinner />;
-  if (!pelicula) return null;
 
-  // poster es Base64 en TextField
+  if (!pelicula) {
+    return (
+      <Box
+        sx={{
+          minHeight: "60vh",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 2,
+          textAlign: "center",
+          px: 2,
+        }}
+      >
+        <Typography variant="h5">😕 No se encontró la película</Typography>
+
+        <Typography color="text.secondary">
+          Puede que la película no exista, haya sido eliminada o no tengas acceso.
+        </Typography>
+
+        <Button variant="contained" onClick={() => navigate(-1)}>
+          Volver
+        </Button>
+      </Box>
+    );
+  }
+
+  // Poster en Base64 o placeholder
   const image = pelicula.poster
-    ? (pelicula.poster.startsWith("data:image")
-        ? pelicula.poster
-        : `data:image/jpeg;base64,${pelicula.poster}`)
+    ? pelicula.poster.startsWith("data:image")
+      ? pelicula.poster
+      : `data:image/jpeg;base64,${pelicula.poster}`
     : "https://via.placeholder.com/300";
 
   return (
@@ -48,10 +89,26 @@ export default function PeliculaDetalle() {
         </Typography>
 
         <Box component="ul" sx={{ m: 0, pl: 2 }}>
-          <li><Typography><b>Género:</b> {pelicula.genero || "—"}</Typography></li>
-          <li><Typography><b>Duración (min):</b> {pelicula.duracion_min ?? "—"}</Typography></li>
-          <li><Typography><b>Fecha de estreno:</b> {pelicula.fecha_estreno || "—"}</Typography></li>
-          <li><Typography><b>Director:</b> {pelicula.director?.nombre || "—"}</Typography></li>
+          <li>
+            <Typography>
+              <b>Género:</b> {pelicula.genero || "—"}
+            </Typography>
+          </li>
+          <li>
+            <Typography>
+              <b>Duración (min):</b> {pelicula.duracion_min ?? "—"}
+            </Typography>
+          </li>
+          <li>
+            <Typography>
+              <b>Fecha de estreno:</b> {pelicula.fecha_estreno || "—"}
+            </Typography>
+          </li>
+          <li>
+            <Typography>
+              <b>Director:</b> {pelicula.director?.nombre || "—"}
+            </Typography>
+          </li>
         </Box>
       </CardContent>
     </Card>
