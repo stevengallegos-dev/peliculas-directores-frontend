@@ -13,6 +13,7 @@ export async function login(username, password) {
   params.append("username", username);
   params.append("password", password);
   params.append("client_id", CLIENT_ID);
+  params.append("client_secret", CLIENT_SECRET);
 
 
   const response = await axios.post(
